@@ -20,20 +20,10 @@ CxxCollectionTestSuite.test("SimpleCollectionNoSubscript as Swift.Collection") {
   expectEqual(c.last, 5)
 }
 
-// === SimpleCollectionReadOnly ===
-
-extension SimpleCollectionReadOnly : CxxRandomAccessCollection {
-}
-
 CxxCollectionTestSuite.test("SimpleCollectionReadOnly as Swift.Collection") {
   let c = SimpleCollectionReadOnly()
   expectEqual(c.first, 1)
   expectEqual(c.last, 5)
-}
-
-// === SimpleArrayWrapper ===
-
-extension SimpleArrayWrapper : CxxRandomAccessCollection {
 }
 
 CxxCollectionTestSuite.test("SimpleArrayWrapper as Swift.Collection") {

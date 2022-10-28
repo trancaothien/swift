@@ -363,4 +363,26 @@ void swift::conformToCxxSequenceIfNeeded(
   impl.addSynthesizedTypealias(decl, ctx.getIdentifier("RawIterator"),
                                rawIteratorTy);
   impl.addSynthesizedProtocolAttrs(decl, {KnownProtocolKind::CxxSequence});
+
+  // Try to conform to CxxRandomAccessCollection if possible.
+
+  auto cxxRAIteratorProto =
+      ctx.getProtocol(KnownProtocolKind::UnsafeCxxRandomAccessIterator);
+  if (!cxxRAIteratorProto ||
+      !ctx.getProtocol(KnownProtocolKind::CxxRandomAccessCollection))
+    return;
+
+  // Check if `begin()` and `end()` are non-mutating.
+  if (begin->isMutating() || end->isMutating())
+    return;
+
+  // Check if RawIterator conforms to UnsafeCxxRandomAccessIterator.
+  auto rawIteratorRAConformanceRef =
+      decl->getModuleContext()->conformsToProtocol(rawIteratorTy,
+                                                   cxxRAIteratorProto);
+  if (!rawIteratorRAConformanceRef || !rawIteratorRAConformanceRef.isConcrete())
+    return;
+
+  impl.addSynthesizedProtocolAttrs(
+      decl, {KnownProtocolKind::CxxRandomAccessCollection});
 }
